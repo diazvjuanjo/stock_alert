@@ -9,10 +9,10 @@ import ssl
 load_dotenv()
 
 # Configuración desde .env
-URL_FTP = os.getenv("URL_FTP")
-EMAIL_SENDER = os.getenv("EMAIL_SENDER")
-EMAIL_RECEIVER = os.getenv("EMAIL_RECEIVER")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+URL_FTP = os.environ["URL_FTP"]
+EMAIL_SENDER = os.environ["EMAIL_SENDER"]
+EMAIL_RECEIVER = os.environ["EMAIL_RECEIVER"]
+EMAIL_PASSWORD = os.environ["EMAIL_PASSWORD"]
 
 # Rutas locales
 LOCAL_PATH = "stock_actual.xlsx"
