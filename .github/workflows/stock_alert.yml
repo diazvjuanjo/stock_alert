@@ -1,0 +1,32 @@
+name: Alerta de Stock Diaria
+
+on:
+  schedule:
+    - cron: '30 6 * * *'  # Todos los días a las 06:30 UTC (08:30 hora peninsular española)
+  workflow_dispatch:       # Permite ejecutarlo manualmente desde GitHub
+
+jobs:
+  alerta-stock:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: |
+          pip install pandas openpyxl
+
+      - name: Ejecutar script de alerta
+        env:
+          URL_FTP: ${{ secrets.URL_FTP }}
+          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+          EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        run: |
+          stock_alert.py
