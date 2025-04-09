@@ -4,6 +4,7 @@ from email.message import EmailMessage
 from datetime import datetime
 import os
 import ssl
+from dotenv import load_dotenv  
 
 # Cargar variables de entorno
 load_dotenv()
@@ -69,7 +70,10 @@ def enviar_email(ruta_adjunto, num_agotados, num_nuevos):
 
 # Descargar archivo actual
 df_actual = descargar_archivo(URL_FTP, LOCAL_PATH)
-
+if df_actual.empty:
+    print("Archivo vacío. No se realiza ninguna acción.")
+    exit()
+    
 if os.path.exists(PREVIOUS_PATH):
     df_anterior = pd.read_excel(PREVIOUS_PATH)
     df_actual = detectar_cambios(df_actual, df_anterior)
