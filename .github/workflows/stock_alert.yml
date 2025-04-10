@@ -20,7 +20,8 @@ jobs:
 
       - name: Instalar dependencias
         run: |
-          pip install pandas openpyxl
+          pip install -r requirements.txt
+
 
       - name: Ejecutar script de alerta
         env:
