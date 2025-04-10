@@ -2,7 +2,7 @@ name: Alerta de Stock Diaria
 
 on:
   schedule:
-    - cron: '30 6 * * *'  # Todos los días a las 06:30 UTC (08:30 hora peninsular española)
+    - cron: '30 6 * * *'  # Todos los días a las 06:30 UTC (08:30 hora España)
   workflow_dispatch:       # Permite ejecutarlo manualmente desde GitHub
 
 jobs:
@@ -18,10 +18,16 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Descargar stock_anterior.xlsx si existe
+        uses: actions/download-artifact@v3
+        with:
+          name: stock-anterior
+          path: .
+        continue-on-error: true
+
       - name: Instalar dependencias
         run: |
           pip install -r requirements.txt
-
 
       - name: Ejecutar script de alerta
         env:
@@ -31,3 +37,16 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         run: |
           python app.py
+
+      - name: Subir nuevo stock_anterior.xlsx
+        uses: actions/upload-artifact@v3
+        with:
+          name: stock-anterior
+          path: stock_anterior.xlsx
+
+      - name: Subir archivo de alerta como artefacto
+        uses: actions/upload-artifact@v3
+        with:
+          name: alerta-stock
+          path: alerta_stock_*.xlsx
+
