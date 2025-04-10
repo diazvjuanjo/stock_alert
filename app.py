@@ -5,6 +5,7 @@ from datetime import datetime
 import os
 import ssl
 from dotenv import load_dotenv  
+import requests
 
 # Cargar variables de entorno
 load_dotenv()
@@ -21,8 +22,17 @@ PREVIOUS_PATH = "stock_anterior.xlsx"
 OUTPUT_PATH = f"alerta_stock_{datetime.now().strftime('%Y-%m-%d')}.xlsx"
 
 def descargar_archivo(url, destino):
-    df = pd.read_excel(url)
-    df.to_excel(destino, index=False)
+    headers = {
+        "User-Agent": "Mozilla/5.0"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code != 200:
+        raise Exception(f"Error al descargar el archivo: {response.status_code}")
+
+    with open(destino, "wb") as f:
+        f.write(response.content)
+
+    df = pd.read_excel(destino)
     return df
 
 def detectar_cambios(df_actual, df_anterior):
