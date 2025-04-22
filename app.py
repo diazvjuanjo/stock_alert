@@ -18,8 +18,9 @@ EMAIL_PASSWORD = os.environ["EMAIL_PASSWORD"]
 
 # Rutas locales
 LOCAL_PATH = "stock_actual.xlsx"
-PREVIOUS_PATH = "stock_anterior.xlsx"
+PREVIOUS_PATH = "../stock_anterior.xlsx"  # Se guarda y lee fuera del directorio de trabajo
 OUTPUT_PATH = f"alerta_stock_{datetime.now().strftime('%Y-%m-%d')}.xlsx"
+
 
 def descargar_archivo(url, destino):
     headers = {"User-Agent": "Mozilla/5.0"}
