@@ -2,8 +2,8 @@ name: Alerta de Stock Diaria
 
 on:
   schedule:
-    - cron: '30 6 * * *'  # Todos los días a las 06:30 UTC (08:30 en España)
-  workflow_dispatch:       # Permite ejecutarlo manualmente desde GitHub
+    - cron: '30 6 * * *'  # Todos los días a las 06:30 UTC
+  workflow_dispatch:
 
 jobs:
   alerta-stock:
@@ -18,16 +18,22 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Descargar stock_anterior.xlsx si existe
-        uses: actions/download-artifact@v4
-        with:
-          name: stock-anterior
-          path: .
-        continue-on-error: true
-
       - name: Instalar dependencias
         run: |
           pip install -r requirements.txt
+
+      - name: Descargar stock_anterior.xlsx desde rama stock-cache
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git fetch origin stock-cache || echo "No hay rama stock-cache todavía"
+          git switch stock-cache || git checkout -b stock-cache
+          cp stock_anterior.xlsx ../stock_anterior.xlsx || echo "No existe stock_anterior.xlsx aún"
+        continue-on-error: true
+
+      - name: Volver a la rama principal
+        run: |
+          git switch ${{ github.ref_name }}
 
       - name: Ejecutar script de alerta
         env:
@@ -38,15 +44,18 @@ jobs:
         run: |
           python app.py
 
-      - name: Subir nuevo stock_anterior.xlsx
-        uses: actions/upload-artifact@v4
-        with:
-          name: stock-anterior
-          path: stock_anterior.xlsx
+      - name: Subir stock_anterior.xlsx a la rama stock-cache
+        run: |
+          cp stock_anterior.xlsx ./cache/
+          git switch stock-cache || git checkout -b stock-cache
+          cp ./cache/stock_anterior.xlsx .
+          git add stock_anterior.xlsx
+          git commit -m "Actualizar stock_anterior.xlsx" || echo "Sin cambios"
+          git push origin stock-cache
+        continue-on-error: true
 
       - name: Subir archivo de alerta como artefacto
         uses: actions/upload-artifact@v4
         with:
           name: alerta-stock
           path: alerta_stock_*.xlsx
-
