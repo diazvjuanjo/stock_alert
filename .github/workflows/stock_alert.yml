@@ -2,7 +2,7 @@ name: Alerta de Stock Diaria
 
 on:
   schedule:
-    - cron: '30 6 * * *'  # Todos los días a las 06:30 UTC (08:30 hora España)
+    - cron: '30 6 * * *'  # Todos los días a las 06:30 UTC (08:30 en España)
   workflow_dispatch:       # Permite ejecutarlo manualmente desde GitHub
 
 jobs:
