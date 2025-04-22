@@ -2,11 +2,11 @@ name: Alerta de Stock Diaria
 
 on:
   schedule:
-    - cron: '30 6 * * *'  # Todos los días a las 06:30 UTC
+    - cron: '30 6 * * *'  # Todos los días a las 06:30 UTC (08:30 hora España)
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: write  # Permitir commits desde el workflow
 
 jobs:
   alerta-stock:
@@ -34,7 +34,7 @@ jobs:
           cp stock_anterior.xlsx ../stock_anterior.xlsx || echo "No existe stock_anterior.xlsx aún"
         continue-on-error: true
 
-      - name: Volver a la rama principal
+      - name: Volver a la rama original
         run: |
           git switch ${{ github.ref_name }}
 
@@ -49,7 +49,9 @@ jobs:
 
       - name: Subir stock_anterior.xlsx a la rama stock-cache
         run: |
+          mkdir -p cache
           cp stock_anterior.xlsx ./cache/
+          rm stock_anterior.xlsx || true
           git switch stock-cache || git checkout -b stock-cache
           cp ./cache/stock_anterior.xlsx .
           git add stock_anterior.xlsx
@@ -62,3 +64,4 @@ jobs:
         with:
           name: alerta-stock
           path: alerta_stock_*.xlsx
+
