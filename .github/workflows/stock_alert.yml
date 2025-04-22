@@ -50,8 +50,8 @@ jobs:
       - name: Subir stock_anterior.xlsx a la rama stock-cache
         run: |
           mkdir -p cache
-          cp stock_anterior.xlsx ./cache/
-          rm stock_anterior.xlsx || true
+          cp ../stock_anterior.xlsx ./cache/
+          rm ../stock_anterior.xlsx || true
           git switch stock-cache || git checkout -b stock-cache
           cp ./cache/stock_anterior.xlsx .
           git add stock_anterior.xlsx
