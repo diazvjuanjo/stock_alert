@@ -5,6 +5,9 @@ on:
     - cron: '30 6 * * *'  # Todos los días a las 06:30 UTC
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   alerta-stock:
     runs-on: ubuntu-latest
